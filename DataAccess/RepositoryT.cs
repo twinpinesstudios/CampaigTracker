@@ -17,6 +17,10 @@ namespace DataAccess
 	{
 		private DbContext dbContext;
 
+		public Repository(DbContext context)
+		{
+			this.dbContext = context;
+		}
 
 		/// <summary>
 		/// Provides functionality to evaluate queries against a specific data source wherein the 
