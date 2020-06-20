@@ -16,6 +16,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Converters;
+using CampaignTracker.API;
+using CampaignTracker.API.Setup;
 
 namespace CampaignTracker.API
 {
@@ -50,6 +52,24 @@ namespace CampaignTracker.API
             app.UseAuthorization();
 
 			app.UseRequestLocalization(app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>().Value);
+
+			app.UseHttpsRedirection();
+
+			var modelBuilder = CampaignTrackerODataModelBuilder.GenerateModelBuilder(app.ApplicationServices);
+
+			app.UseMvc(routes =>
+			{
+				routes
+					.Count()
+					.Select()
+					.Filter()
+					.Expand()
+					.OrderBy()
+					.SkipToken();
+
+				routes.EnableDependencyInjection();
+				routes.MapVersionedODataRoutes("odata", "v{version:apiVersion}", modelBuilder.GetEdmModels());
+			});
 
 			app.UseEndpoints(endpoints =>
             {

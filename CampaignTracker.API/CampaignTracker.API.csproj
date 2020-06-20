@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CampaignTracker.API.Setup\CampaignTracker.API.Setup.csproj" />
     <ProjectReference Include="..\Localisation\Localisation.csproj" />
   </ItemGroup>
 

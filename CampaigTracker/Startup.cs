@@ -14,6 +14,10 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.AspNetCore.Mvc.Razor;
+using System.Reflection;
+using Localisation.Properties;
 
 namespace CampaigTracker
 {
@@ -29,7 +33,21 @@ namespace CampaigTracker
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllersWithViews();
+            services.AddCors();
+
+            services.AddRazorPages()
+                .AddMvcOptions(opts =>
+                {
+                    opts.Filters.Add(new AuthorizeFilter());
+                })
+                .AddViewLocalization(LanguageViewLocationExpanderFormat.Suffix)
+                .AddDataAnnotationsLocalization(o => o.DataAnnotationLocalizerProvider = (type, factory) =>
+                {
+                    var assemblyName = new AssemblyName(typeof(LocalStrings).GetTypeInfo().Assembly.FullName);
+                    return factory.Create("LocalStrings", assemblyName.Name);
+                });
+
+            services.AddHttpContextAccessor();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -91,7 +109,7 @@ namespace CampaigTracker
 
             try
             {
-                var connectionString = "";
+                var connectionString = "Server=tcp:campaigntracker.database.windows.net,1433;Initial Catalog=CampaignTracker-Local;Persist Security Info=False;User ID=user1;Password=HjWygwtg1yh;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
 
                 var dbOptionsBuilder = new DbContextOptionsBuilder()
                     .UseSqlServer(
@@ -104,7 +122,7 @@ namespace CampaigTracker
                     )
                     .ConfigureWarnings(x => x.Ignore(CoreEventId.DetachedLazyLoadingWarning));
 
-                context = new CampaignContext();
+                context = new CampaignContext(dbOptionsBuilder.Options);
                 context.Database.Migrate();
             }
             catch (ArgumentOutOfRangeException aex)

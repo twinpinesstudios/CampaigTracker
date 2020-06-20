@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace CampaignTracker.API
+namespace CampaignTracker.API.Setup
 {
     public static class ODataApiVersions
     {

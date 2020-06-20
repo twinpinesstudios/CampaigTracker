@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace CampaignTracker.Api.Controllers.Tests
 {
     [TestClass]
-    public class UnitTest1
+    public class FactionControllerTests
     {
         private Mock<IRepositoryProvider> mockRepositoryProvider;
         private Mock<IRepository<Faction>> mockFactionRepository;
